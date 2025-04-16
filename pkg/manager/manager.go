@@ -14,6 +14,8 @@ import (
 	"k8s.io/client-go/transport"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
+	"sigs.k8s.io/controller-runtime/pkg/metrics/server"
+	ctrlwebhook "sigs.k8s.io/controller-runtime/pkg/webhook"
 )
 
 const (
@@ -26,12 +28,18 @@ const (
 
 func New(ctx context.Context, scheme *runtime.Scheme) (manager.Manager, error) {
 	mgrConfig := ctrl.Options{
-		MetricsBindAddress:     fmt.Sprintf(":%d", MetricsPort),
-		LeaderElection:         false,
-		Port:                   WebHookPort,
+		Metrics: server.Options{
+			BindAddress: fmt.Sprintf(":%d", MetricsPort),
+		},
 		HealthProbeBindAddress: fmt.Sprintf(":%d", ProbePort),
+		LeaderElection:         false,
 		Scheme:                 scheme,
 	}
+
+	webhookServer := ctrlwebhook.NewServer(ctrlwebhook.Options{
+		Port: WebHookPort,
+	})
+	mgrConfig.WebhookServer = webhookServer
 
 	item, err := configstore.Filter().
 		Slice(ManagerConfigKey).
@@ -52,13 +60,13 @@ func New(ctx context.Context, scheme *runtime.Scheme) (manager.Manager, error) {
 			return nil, errors.Wrap(err, "unable to get configuration")
 		}
 
-		mgrConfig = *c.(*manager.Options)
+		mgrConfig = *c.(*ctrl.Options)
 	}
 
 	logger.Get(ctx).Info(
 		"Manager initialized",
-		"Webhook.Port", mgrConfig.Port,
-		"Metrics.Address", mgrConfig.MetricsBindAddress,
+		"Webhook.Port", WebHookPort,
+		"Metrics.Address", mgrConfig.Metrics.BindAddress,
 		"Probe.Address", mgrConfig.HealthProbeBindAddress,
 		"LeaderElection.Enabled", mgrConfig.LeaderElection,
 		"LeaderElection.Namespace", mgrConfig.LeaderElectionNamespace,

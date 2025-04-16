@@ -12,17 +12,14 @@ import (
 	apiextv1 "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/typed/apiextensions/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
-	"k8s.io/client-go/util/workqueue"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/builder"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
-	"sigs.k8s.io/controller-runtime/pkg/event"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
-	"sigs.k8s.io/controller-runtime/pkg/source"
 )
 
 func ControllerManagedBy(m manager.Manager) *Builder {
@@ -35,6 +32,7 @@ func ControllerManagedBy(m manager.Manager) *Builder {
 
 	return &Builder{
 		blder:     ctrl.NewControllerManagedBy(m),
+		mgr:       m,
 		crdGetter: crdGetter,
 		log:       log,
 	}
@@ -43,6 +41,7 @@ func ControllerManagedBy(m manager.Manager) *Builder {
 // Builder builds a Controller and it can own objects later when the crd of the object ready.
 type Builder struct {
 	blder *builder.Builder
+	mgr   manager.Manager
 
 	ctrl             controller.Controller
 	crdGetter        apiextv1.CustomResourceDefinitionsGetter
@@ -95,7 +94,7 @@ func (blder *Builder) TryOwns(object client.Object, crdDependency string, predic
 
 		blder.blder.Owns(object, builder.WithPredicates(predicates...))
 	} else {
-		blder.log.Info("Will try to own the object laster because the CRD is not ready", "crd", crdDependency)
+		blder.log.Info("Will try to own the object later because the CRD is not ready", "crd", crdDependency)
 
 		blder.tryOwnsInputs = append(blder.tryOwnsInputs, tryOwnsInput{
 			object:        object,
@@ -113,22 +112,25 @@ func (blder *Builder) Build(r reconcile.Reconciler) (controller.Controller, erro
 	if len(blder.tryOwnsInputs) > 0 {
 		blder.log.Info("Some objects not owned because the CRDs are not ready, we will watch the CRDs and own the objects when they are ready")
 
+		// Store manager reference when creating tryWatcher
 		w = &tryWatcher{
 			crdGetter:        blder.crdGetter,
 			forObject:        blder.forObject,
 			log:              blder.log,
 			globalPredicates: blder.globalPredicates,
 			tryOwnsInputs:    blder.tryOwnsInputs,
+			manager:          blder.mgr,
 		}
 
-		src := &source.Kind{Type: &v1.CustomResourceDefinition{}}
-		hdler := &handler.Funcs{
-			CreateFunc: func(event.CreateEvent, workqueue.RateLimitingInterface) {
+		crdObj := &v1.CustomResourceDefinition{}
+
+		blder.blder.Watches(
+			client.Object(crdObj),
+			handler.EnqueueRequestsFromMapFunc(func(ctx context.Context, obj client.Object) []reconcile.Request {
 				w.TryWatch()
-			},
-		}
-
-		blder.blder.Watches(src, hdler)
+				return []reconcile.Request{}
+			}),
+		)
 	}
 
 	ctrl, err := blder.blder.Build(r)
@@ -160,6 +162,7 @@ type tryWatcher struct {
 	watched map[client.Object]bool
 
 	ctrl      controller.Controller
+	manager   manager.Manager
 	crdGetter apiextv1.CustomResourceDefinitionsGetter
 	log       logr.Logger
 
@@ -170,6 +173,10 @@ type tryWatcher struct {
 
 func (w *tryWatcher) WithController(ctrl controller.Controller) *tryWatcher {
 	w.ctrl = ctrl
+
+	if mgr, ok := ctrl.(interface{ GetManager() manager.Manager }); ok {
+		w.manager = mgr.GetManager()
+	}
 
 	return w
 }
@@ -191,16 +198,23 @@ func (w *tryWatcher) TryWatch() {
 			continue
 		}
 
-		src := &source.Kind{Type: own.object}
-		hdler := &handler.EnqueueRequestForOwner{
-			OwnerType:    w.forObject,
-			IsController: true,
+		// Use the stored manager instead of trying to extract it from the controller
+		if w.manager == nil {
+			w.log.Error(errors.New("manager is not available"),
+				"cannot create controller", "crd", own.crdDependency)
+			continue
 		}
 
-		allPredicates := append([]predicate.Predicate(nil), w.globalPredicates...)
-		allPredicates = append(allPredicates, own.predicates...)
+		// Create a builder using the stored manager
+		err := builder.ControllerManagedBy(w.manager).
+			For(w.forObject).
+			Owns(own.object, builder.WithPredicates(own.predicates...)).
+			Complete(reconcile.Func(func(ctx context.Context, req reconcile.Request) (reconcile.Result, error) {
+				// Empty reconciler, we just need the watches set up
+				return reconcile.Result{}, nil
+			}))
 
-		if err := w.ctrl.Watch(src, hdler, allPredicates...); err != nil {
+		if err != nil {
 			w.log.Error(err, "Watch Source Failed", "crd", own.crdDependency)
 		} else {
 			w.log.Info("Watch Source Success", "crd", own.crdDependency)

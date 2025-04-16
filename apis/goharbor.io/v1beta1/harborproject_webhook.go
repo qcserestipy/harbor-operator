@@ -11,6 +11,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
+	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
 
 // log is for logging in this package.
@@ -27,29 +28,29 @@ func (hp *HarborProject) SetupWebhookWithManager(_ context.Context, mgr ctrl.Man
 var _ webhook.Validator = &HarborProject{}
 
 // ValidateCreate implements webhook.Validator so a webhook will be registered for the type.
-func (hp *HarborProject) ValidateCreate() error {
+func (hp *HarborProject) ValidateCreate() (admission.Warnings, error) {
 	hplog.Info("validate create", "name", hp.Name)
 
-	return hp.Validate(nil)
+	return nil, hp.Validate(nil)
 }
 
 // ValidateUpdate implements webhook.Validator so a webhook will be registered for the type.
-func (hp *HarborProject) ValidateUpdate(old runtime.Object) error {
+func (hp *HarborProject) ValidateUpdate(old runtime.Object) (admission.Warnings, error) {
 	hplog.Info("validate update", "name", hp.Name)
 
 	obj, ok := old.(*HarborProject)
 	if !ok {
-		return errors.Errorf("failed type assertion on kind: %s", old.GetObjectKind().GroupVersionKind().String())
+		return nil, errors.Errorf("failed type assertion on kind: %s", old.GetObjectKind().GroupVersionKind().String())
 	}
 
-	return hp.Validate(obj)
+	return nil, hp.Validate(obj)
 }
 
 // ValidateDelete implements webhook.Validator so a webhook will be registered for the type.
-func (hp *HarborProject) ValidateDelete() error {
+func (hp *HarborProject) ValidateDelete() (admission.Warnings, error) {
 	hplog.Info("validate delete", "name", hp.Name)
 
-	return nil
+	return nil, nil
 }
 
 func (hp *HarborProject) Validate(old *HarborProject) error {
