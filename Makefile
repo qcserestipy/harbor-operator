@@ -636,7 +636,7 @@ HELM=$(shell which helm 2> /dev/null)
 endif
 
 # find or download goreleaser
-GORELEASER_VERSION := v1.24.0
+GORELEASER_VERSION := v1.26.17
 GORELEASER := $(BIN)/goreleaser
 
 .PHONY: goreleaser

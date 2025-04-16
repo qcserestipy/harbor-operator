@@ -32,7 +32,7 @@ require (
 	github.com/uber/jaeger-lib v2.2.0+incompatible
 	github.com/umisama/go-regexpcache v0.0.0-20150417035358-2444a542492f
 	github.com/zalando/postgres-operator v1.6.1
-	go.uber.org/zap v1.24.0
+	go.uber.org/zap v1.26.17
 	golang.org/x/crypto v0.1.0
 	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4
 	gopkg.in/yaml.v2 v2.4.0
