@@ -530,7 +530,7 @@ clean:
 
 # find or download controller-gen
 # download controller-gen if necessary
-CONTROLLER_GEN_VERSION := 0.9.2
+CONTROLLER_GEN_VERSION := 0.17.3
 CONTROLLER_GEN := $(BIN)/controller-gen
 
 .PHONY: controller-gen
@@ -573,7 +573,7 @@ $(MARKDOWNLINT):
 # find or download golangci-lint
 # download golangci-lint if necessary
 GOLANGCI_LINT := $(BIN)/golangci-lint
-GOLANGCI_LINT_VERSION := 1.49.0
+GOLANGCI_LINT_VERSION := 1.55.2
 
 .PHONY: golangci-lint
 golangci-lint:
@@ -590,7 +590,7 @@ $(GOLANGCI_LINT):
 
 # find or download kubebuilder
 # download kubebuilder if necessary
-KUBEBUIDER_VERSION := 3.6.0
+KUBEBUIDER_VERSION := 3.14.0
 KUBEBUILDER=$(BIN)/kubebuilder
 
 .PHONY: kubebuilder
@@ -609,7 +609,7 @@ $(KUBEBUILDER):
 
 # find or download kustomize
 # download kustomize if necessary
-KUSTOMIZE_VERSION := 4.5.7
+KUSTOMIZE_VERSION := 5.3.0
 KUSTOMIZE := $(BIN)/kustomize
 
 .PHONY: kustomize
@@ -636,7 +636,7 @@ HELM=$(shell which helm 2> /dev/null)
 endif
 
 # find or download goreleaser
-GORELEASER_VERSION := v1.11.0
+GORELEASER_VERSION := v1.24.0
 GORELEASER := $(BIN)/goreleaser
 
 .PHONY: goreleaser
@@ -661,7 +661,7 @@ $(GORELEASER):
 
 # find or download stringer
 # download stringer if necessary
-STRINGER_VERSION := v0.11.0
+STRINGER_VERSION := v0.32.0
 STRINGER := $(BIN)/stringer
 
 .PHONY: stringer
@@ -704,7 +704,7 @@ $(HADOLINT):
 		> $(HADOLINT)
 	chmod u+x $(HADOLINT)
 
-KIND_VERSION := 0.14.0
+KIND_VERSION := 0.21.0
 KIND := $(BIN)/kind
 
 .PHONY: kind
