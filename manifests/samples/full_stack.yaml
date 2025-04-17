@@ -104,6 +104,8 @@ spec:
       enabled: true
   chartmuseum: {}
   exporter: {}
+  jobservice:
+    replicas: 1
   trivy:
     skipUpdate: false
     storage: {}
