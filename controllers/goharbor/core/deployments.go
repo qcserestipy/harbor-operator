@@ -58,6 +58,20 @@ const (
 	httpPort  = 8080 // https://github.com/goharbor/harbor/blob/2fb1cc89d9ef9313842cc68b4b7c36be73681505/src/common/const.go#L127
 )
 
+// Constants that were present in older versions of Harbor common package but have been removed/moved
+// This is a quick fix for compatibility
+// This should be removed when the harbor-operator is updated to use a newer version of Harbor
+const (
+	// WithChartMuseum environment variable name for enabling Chart Museum
+	WithChartMuseum = "WITH_CHARTMUSEUM"
+
+	// WithNotary environment variable name for enabling Notary
+	WithNotary = "WITH_NOTARY"
+
+	// ChartRepoURL base URL path for chart repository
+	ChartRepoURL = "/chartrepo"
+)
+
 func getDefaultAllowedRegistryTypesForProxyCache() string {
 	// TODO: only enable docker registry in harbor 2.3.x
 	return strings.Join([]string{
@@ -205,9 +219,9 @@ func (r *Reconciler) GetDeployment(ctx context.Context, core *goharborv1.Core) (
 				},
 			},
 		}),
-		common.WithChartMuseum: harbor.Value(strconv.FormatBool(core.Spec.Components.ChartRepository != nil)),
-		common.WithNotary:      harbor.Value(strconv.FormatBool(core.Spec.Components.NotaryServer != nil)),
-		common.WithTrivy:       harbor.Value(strconv.FormatBool(core.Spec.Components.Trivy != nil)),
+		WithChartMuseum:  harbor.Value(strconv.FormatBool(core.Spec.Components.ChartRepository != nil)),
+		WithNotary:       harbor.Value(strconv.FormatBool(core.Spec.Components.NotaryServer != nil)),
+		common.WithTrivy: harbor.Value(strconv.FormatBool(core.Spec.Components.Trivy != nil)),
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "cannot configure environment variables")
@@ -351,7 +365,7 @@ func (r *Reconciler) GetDeployment(ctx context.Context, core *goharborv1.Core) (
 	}
 
 	if core.Spec.Components.ChartRepository != nil {
-		urlConfig, err := harbor.EnvVar(common.ChartRepoURL, harbor.Value(core.Spec.Components.ChartRepository.URL))
+		urlConfig, err := harbor.EnvVar(ChartRepoURL, harbor.Value(core.Spec.Components.ChartRepository.URL))
 		if err != nil {
 			return nil, errors.Wrap(err, "cannot configure chartmuseum")
 		}

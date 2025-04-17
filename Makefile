@@ -485,7 +485,7 @@ CERTMANAGER_NAMESPACE := cert-manager
 certmanager: helm jetstack
 	$(MAKE) kube-namespace NAMESPACE=$(CERTMANAGER_NAMESPACE)
 	$(HELM) repo add jetstack https://charts.jetstack.io # https://cert-manager.io/docs/installation/kubernetes/
-	$(HELM) upgrade --install certmanager jetstack/cert-manager \
+	$(HELM) upgrade --install certmanager cert-manager/cert-manager \
 		--namespace $(CERTMANAGER_NAMESPACE) \
 		--version v1.4.3 \
 		--set installCRDs=true

@@ -37,6 +37,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
+	"sigs.k8s.io/controller-runtime/pkg/metrics/server"
 )
 
 // These tests use Ginkgo (BDD-style Go testing framework). Refer to
@@ -90,8 +91,10 @@ var _ = BeforeSuite(func() {
 	Expect(k8sClient).ToNot(BeNil())
 
 	mgr, err := ctrl.NewManager(cfg, ctrl.Options{
-		MetricsBindAddress: "0",
-		Scheme:             s,
+		Metrics: server.Options{
+			BindAddress: fmt.Sprintf(":%d", 0),
+		},
+		Scheme: s,
 	})
 	Expect(err).NotTo(HaveOccurred(), "failed to create manager")
 

@@ -25,7 +25,7 @@ import (
 type ImagePathRewriter struct {
 	Client  client.Client
 	Log     logr.Logger
-	decoder *admission.Decoder
+	decoder admission.Decoder
 }
 
 // Handle the admission webhook for mutating the image path of deploying pods.
@@ -220,7 +220,7 @@ func (ipr *ImagePathRewriter) lookupDefaultHarborServerConfig(ctx context.Contex
 
 // A decoder will be automatically injected.
 // InjectDecoder injects the decoder.
-func (ipr *ImagePathRewriter) InjectDecoder(d *admission.Decoder) error {
+func (ipr *ImagePathRewriter) InjectDecoder(d admission.Decoder) error {
 	ipr.decoder = d
 
 	return nil

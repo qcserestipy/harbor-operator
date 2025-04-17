@@ -14,7 +14,6 @@ require (
 	github.com/goharbor/go-client v0.26.2
 	github.com/goharbor/harbor/src v0.0.0-20250415060739-f8f1994c9ee9
 	github.com/jaegertracing/jaeger-lib v2.4.1+incompatible
-	github.com/jetstack/cert-manager v0.0.0-00010101000000-000000000000
 	github.com/markbates/pkger v0.17.1
 	github.com/minio/minio-go/v6 v6.0.57
 	github.com/onsi/ginkgo/v2 v2.21.0
@@ -163,5 +162,3 @@ require (
 	sigs.k8s.io/json v0.0.0-20241014173422-cfa47c3a1cc8 // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.5.0 // indirect
 )
-
-replace github.com/jetstack/cert-manager => github.com/cert-manager/cert-manager v1.13.3

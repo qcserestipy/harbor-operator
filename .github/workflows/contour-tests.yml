@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # https://github.com/jetstack/cert-manager/tags
+        # https://github.com/cert-manager/cert-manager/tags
         certManager:
           - "1.8.2"
 
@@ -77,7 +77,7 @@ jobs:
 
       - name: Install CertManager v${{ matrix.certManager }}
         run: |
-          kubectl apply -f "https://github.com/jetstack/cert-manager/releases/download/v${{ matrix.certManager }}/cert-manager.yaml"
+          kubectl apply -f "https://github.com/cert-manager/cert-manager/releases/download/v${{ matrix.certManager }}/cert-manager.yaml"
           sleep 5
           time kubectl -n cert-manager wait --for=condition=Available deployment --all --timeout 300s
 
