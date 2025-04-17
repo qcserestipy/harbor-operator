@@ -123,7 +123,7 @@ Besides, you can also enable the operators of the dependent services in `charts/
 If the Harbor operator is successfully installed, you can install harbor sample
 
 ```shell
-kustomize build --reorder legacy 'config/samples/harborcluster' | kubectl apply -f -
+kustomize build 'config/samples/harborcluster' | kubectl apply -f -
 ```
 
 or use
