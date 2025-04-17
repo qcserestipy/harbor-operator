@@ -4,9 +4,9 @@ kind: Kustomization
 generatorOptions:
   disableNameSuffixHash: true
 
+
 configMapGenerator:
-- name: config-template
-  behavior: create
+- behavior: create
   files:
   - assets/chartmuseum-config.yaml.tmpl
   - assets/core-config.conf.tmpl
@@ -16,9 +16,8 @@ configMapGenerator:
   - assets/portal-config.conf.tmpl
   - assets/registry-config.yaml.tmpl
   - assets/registryctl-config.yaml.tmpl
-
-- name: config
-  behavior: create
+  name: config-template
+- behavior: create
   files:
   - controllers/core-ctrl.yaml
   - controllers/chartmuseum-ctrl.yaml
@@ -35,3 +34,4 @@ configMapGenerator:
   - controllers/registryctl-ctrl.yaml
   - controllers/trivy-ctrl.yaml
   - config.yaml
+  name: config

@@ -6,14 +6,14 @@ namespace: harbor-operator-ns
 
 # Common annotations
 commonAnnotations:
-  goharbor.io/operator-version: "v1.3.0"
-  goharbor.io/deploy-mode: "harbor"
-  goharbor.io/deploy-engine: "Kustomization"
+  goharbor.io/deploy-engine: Kustomization
+  goharbor.io/deploy-mode: harbor
+  goharbor.io/operator-version: v1.3.0
 
 # All the referred deployment manifests
 resources:
-  - namespace.yaml
-  - ../../config/default # harbor operator
+- namespace.yaml
+- ../../config/default
 
 # If you have to override the image path, uncomment this patch and also change the image paths in the patch/image-source.yaml file.
 # Then rebuild.
@@ -21,6 +21,6 @@ resources:
 #  - patch/image-source.yaml
 
 images:
-  - name: goharbor/harbor-operator
-    newName: ghcr.io/goharbor/harbor-operator
-    newTag: dev
+- name: goharbor/harbor-operator
+  newName: ghcr.io/goharbor/harbor-operator
+  newTag: dev

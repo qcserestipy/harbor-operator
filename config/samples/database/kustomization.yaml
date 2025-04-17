@@ -1,18 +1,20 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-commonLabels:
-  sample: "true"
 
 generatorOptions:
   disableNameSuffixHash: true
 
 configMapGenerator:
-- name: harbor-init-db
-  files:
+- files:
   - init-db.sql
+  name: harbor-init-db
 
 secretGenerator:
-- name: harbor-database-password
-  literals:
+- literals:
   - postgres-password=the-database-password
-  type: "goharbor.io/postgresql"
+  name: harbor-database-password
+  type: goharbor.io/postgresql
+labels:
+- includeSelectors: true
+  pairs:
+    sample: "true"

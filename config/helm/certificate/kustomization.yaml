@@ -5,9 +5,11 @@ namespace: '{{ .Release.Namespace | quote }}'
 generatorOptions:
   disableNameSuffixHash: true
 
-patchesStrategicMerge:
-- patch_certificate_dns.yaml
-- patch_certificate_secret.yaml
 
-bases:
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
 - ../../certmanager
+patches:
+- path: patch_certificate_dns.yaml
+- path: patch_certificate_secret.yaml

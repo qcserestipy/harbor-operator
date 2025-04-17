@@ -1,11 +1,10 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-patchesStrategicMerge:
-- patches-configuration.yaml
 
-bases:
-- ../config
 
 resources:
 - manager.yaml
+- ../config
+patches:
+- path: patches-configuration.yaml
