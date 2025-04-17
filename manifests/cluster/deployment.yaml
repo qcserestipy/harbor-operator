@@ -67267,7 +67267,7 @@ spec:
       - env:
         - name: CONFIG_MAP_NAME
           value: postgres-operator
-        image: ghcr.io/goharbor/postgres-operator:v1.7.0
+        image: ghcr.io/goharbor/postgres-operator:v1.8.2
         imagePullPolicy: IfNotPresent
         name: postgres-operator
         resources:
