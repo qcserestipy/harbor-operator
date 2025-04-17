@@ -1,5 +1,7 @@
-namePrefix: '{{ include "chart.fullname" . }}-'
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
 
+namePrefix: '{{ include "chart.fullname" . }}-'
 namespace: '{{ .Release.Namespace | quote }}'
 
 generatorOptions:
@@ -11,28 +13,36 @@ images:
   newTag: '{{.Values.image.tag|default .Chart.AppVersion}}'
 
 patches:
-- patch_deployment_config.yaml
-- patch_deployment_webhook.yaml
+- path: patch_deployment_config.yaml
+  target:
+    group: apps
+    kind: Deployment
+    name: harbor-operator
+    version: v1
+- path: patch_deployment_webhook.yaml
+  target:
+    group: apps
+    kind: Deployment
+    name: harbor-operator
+    version: v1
+- path: patch_deployment_metadata.yaml
+  target:
+    group: apps
+    kind: Deployment
+    name: harbor-operator
+    version: v1
+- path: patch_deployment_resources.yaml
+  target:
+    group: apps
+    kind: Deployment
+    name: harbor-operator
+    version: v1
+- path: patch_deployment_security.yaml
+  target:
+    group: apps
+    kind: Deployment
+    name: harbor-operator
+    version: v1
 
-patchesJson6902:
-- target:
-    version: v1
-    group: apps
-    kind: Deployment
-    name: harbor-operator
-  path: patch_deployment_metadata.yaml
-- target:
-    version: v1
-    group: apps
-    kind: Deployment
-    name: harbor-operator
-  path: patch_deployment_resources.yaml
-- target:
-    version: v1
-    group: apps
-    kind: Deployment
-    name: harbor-operator
-  path: patch_deployment_security.yaml
-
-bases:
+resources:
 - ../../default

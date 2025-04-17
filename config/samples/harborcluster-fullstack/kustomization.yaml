@@ -1,6 +1,45 @@
+# apiVersion: kustomize.config.k8s.io/v1beta1
+# kind: Kustomization
+
+
+# secretGenerator:
+# - literals:
+#   - accesskey=admin
+#   - secretkey=minio123
+#   name: minio-access-secret
+#   type: Opaque
+# generatorOptions:
+#   disableNameSuffixHash: true
+
+
+# resources:
+# - ../../kustomizeconfig
+# - ../harborcluster-standard/
+# labels:
+# - includeSelectors: true
+#   pairs:
+#     sample: "true"
+# patches:
+# - path: certificate_patch.yaml
+#   target:
+#     group: cert-manager.io
+#     kind: Certificate
+#     name: sample-public-certificate
+#     version: v1
+# - path: spec_patch.yaml
+#   target:
+#     group: goharbor.io
+#     kind: HarborCluster
+#     name: sample
+#     version: v1alpha3
+# - path: incluster_cache_patch.yaml
+# - path: incluster_database_patch.yaml
+# - path: incluster_storage_patch.yaml
+# - path: resources_patch.yaml
+
+
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-
 
 secretGenerator:
 - literals:
@@ -8,31 +47,65 @@ secretGenerator:
   - secretkey=minio123
   name: minio-access-secret
   type: Opaque
+
 generatorOptions:
   disableNameSuffixHash: true
-
 
 resources:
 - ../../kustomizeconfig
 - ../harborcluster-standard/
+
 labels:
 - includeSelectors: true
   pairs:
     sample: "true"
+
 patches:
-- path: certificate_patch.yaml
-  target:
-    group: cert-manager.io
-    kind: Certificate
-    name: sample-public-certificate
-    version: v1
-- path: spec_patch.yaml
-  target:
-    group: goharbor.io
-    kind: HarborCluster
-    name: sample
-    version: v1alpha3
-- path: incluster_cache_patch.yaml
-- path: incluster_database_patch.yaml
-- path: incluster_storage_patch.yaml
-- path: resources_patch.yaml
+  - path: certificate_patch.yaml
+    target:
+      group: cert-manager.io
+      version: v1
+      kind: Certificate
+      name: sample-public-certificate
+
+  - path: spec_patch.yaml
+    target:
+      group: goharbor.io
+      version: v1alpha3
+      kind: HarborCluster
+      name: sample
+
+  - path: incluster_cache_patch.yaml
+    target:
+      group: goharbor.io
+      version: v1alpha3
+      kind: HarborCluster
+      name: sample
+
+  - path: incluster_database_patch.yaml
+    target:
+      group: goharbor.io
+      version: v1alpha3
+      kind: HarborCluster
+      name: sample
+
+  - path: incluster_storage_patch.yaml
+    target:
+      group: goharbor.io
+      version: v1alpha3
+      kind: HarborCluster
+      name: sample
+
+  - path: resources_patch_1.yaml
+    target:
+      group: goharbor.io
+      version: v1alpha3
+      kind: HarborCluster
+      name: sample
+
+  - path: resources_patch_2.yaml
+    target:
+      group: goharbor.io
+      version: v1alpha3
+      kind: HarborCluster
+      name: sample
