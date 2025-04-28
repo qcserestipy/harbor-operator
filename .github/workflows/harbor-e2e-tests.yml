@@ -113,6 +113,8 @@ jobs:
 
         kubectl get all -n ${operatorNamespace}
 
+        kubectl get crd | grep -i goharbor.io
+
         sleep 10
 
     - name: install harbor
