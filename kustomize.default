@@ -48146,8 +48146,8 @@ metadata:
   namespace: harbor-operator-ns
 spec:
   dnsNames:
-  - SERVICE_NAME_PLACEHOLDER.SERVICE_NAMESPACE_PLACEHOLDER.svc
-  - SERVICE_NAME_PLACEHOLDER.SERVICE_NAMESPACE_PLACEHOLDER.svc.cluster.local
+  - webhook-service.harbor-operator-ns.svc
+  - webhook-service.harbor-operator-ns.svc.cluster.local
   issuerRef:
     kind: Issuer
     name: selfsigned-issuer
