@@ -136,6 +136,8 @@ jobs:
             kubectl -n cluster-sample-ns get all
 
             kubectl -n cluster-sample-ns get postgresql.acid.zalan.do/postgresql-cluster-sample-ns-harborcluster-sample -o yaml
+
+            kubectl -n cluster-sample-ns logs postgresql-cluster-sample-ns-harborcluster-sample-0
           done
 
           function wait-for-condition () {
