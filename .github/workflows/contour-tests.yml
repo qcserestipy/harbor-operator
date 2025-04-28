@@ -111,6 +111,8 @@ jobs:
             exit 1
           fi
 
+          kubectl get crd | grep -i goharbor.io
+
       - name: install harbor
         run: |
           set -ex
