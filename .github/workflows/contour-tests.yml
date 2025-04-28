@@ -137,7 +137,7 @@ jobs:
 
             kubectl -n cluster-sample-ns get postgresql.acid.zalan.do/postgresql-cluster-sample-ns-harborcluster-sample -o yaml
 
-            kubectl -n cluster-sample-ns logs postgresql-cluster-sample-ns-harborcluster-sample-0
+            kubectl -n cluster-sample-ns logs deployment.apps/postgres-operator
           done
 
           function wait-for-condition () {
@@ -151,6 +151,8 @@ jobs:
             kubectl get all -n cluster-sample-ns
 
             kubectl -n cluster-sample-ns get postgresql.acid.zalan.do/postgresql-cluster-sample-ns-harborcluster-sample -o yaml
+            kubectl -n cluster-sample-ns logs deployment.apps/postgres-operator
+
 
             for n in $(kubectl -n cluster-sample-ns get po |grep -v Running|grep -v NAME|awk '{print $1}');do
               echo describe $n
