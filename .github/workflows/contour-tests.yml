@@ -111,17 +111,6 @@ jobs:
             exit 1
           fi
 
-          kubectl get crd | grep -i goharbor.io
-          kubectl wait --for=condition=Established crd/harborclusters.goharbor.io --timeout=300s
-
-          kubectl get validatingwebhookconfiguration validating-webhook-configuration -o yaml
-          kubectl get mutatingwebhookconfiguration mutating-webhook-configuration -o yaml
-
-          kubectl get Certificate --all-namespaces
-          kubectl get Issuer --all-namespaces
-
-          kubectl get secret --all-namespaces
-
       - name: install harbor
         run: |
           set -ex
@@ -145,6 +134,8 @@ jobs:
             sleep 30
             echo $i
             kubectl -n cluster-sample-ns get all
+
+            kubectl -n cluster-sample-ns get postgresql.acid.zalan.do/postgresql-cluster-sample-ns-harborcluster-sample -o yaml
           done
 
           function wait-for-condition () {
@@ -156,6 +147,8 @@ jobs:
             kubectl describe harborcluster -n cluster-sample-ns
             kubectl describe harbor -n cluster-sample-ns
             kubectl get all -n cluster-sample-ns
+
+            kubectl -n cluster-sample-ns get postgresql.acid.zalan.do/postgresql-cluster-sample-ns-harborcluster-sample -o yaml
 
             for n in $(kubectl -n cluster-sample-ns get po |grep -v Running|grep -v NAME|awk '{print $1}');do
               echo describe $n
