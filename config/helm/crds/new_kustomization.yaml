@@ -1,0 +1,28 @@
+namePrefix: harbor-operator-
+
+namespace: harbor-operator-ns
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+commonAnnotations:
+  cert-manager.io/inject-ca-from: harbor-operator-ns/harbor-operator-serving-cert
+
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ../../crd
+patches:
+- path: patches/chartmuseums_service.yaml
+- path: patches/cores_service.yaml
+- path: patches/harbors_service.yaml
+- path: patches/jobservices_service.yaml
+- path: patches/notarysigners_service.yaml
+- path: patches/notaryservers_service.yaml
+- path: patches/portals_service.yaml
+- path: patches/registries_service.yaml
+- path: patches/registrycontrollers_service.yaml
+- path: patches/exporters_service.yaml
+- path: patches/harborclusters_service.yaml
+- path: patches/trivies_service.yaml

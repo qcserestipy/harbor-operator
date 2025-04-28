@@ -1,0 +1,93 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Override namespace
+namespace: harbor-operator-ns
+
+# Common annotations
+commonAnnotations:
+  goharbor.io/deploy-engine: Kustomization
+  goharbor.io/deploy-mode: cluster
+  goharbor.io/operator-version: v1.3.0
+
+# All the referred deployment manifests
+resources:
+- ../../config/default
+- patch/namespace.yaml
+- https://raw.githubusercontent.com/spotahome/redis-operator/v1.2.0/example/operator/all-redis-operator-resources.yaml
+- https://raw.githubusercontent.com/spotahome/redis-operator/v1.2.0/manifests/databases.spotahome.com_redisfailovers.yaml
+- github.com/zalando/postgres-operator/manifests?ref=v1.8.0
+- github.com/minio/operator?ref=v4.4.28
+
+images:
+- name: quay.io/spotahome/redis-operator
+  newTag: v1.1.1
+- name: minio/operator
+  newName: quay.io/minio/operator
+- name: minio/console
+  newName: ghcr.io/goharbor/minio-console
+- name: registry.opensource.zalan.do/acid/postgres-operator
+  newName: ghcr.io/goharbor/postgres-operator
+- name: goharbor/harbor-operator
+  newName: ghcr.io/goharbor/harbor-operator
+  newTag: dev
+
+patches:
+- path: patch/annotations.yaml
+  target:
+    group: apps
+    kind: Deployment
+    name: harbor-operator
+    version: v1
+
+# Individual Minio console delete patches  
+- path: patch/delete-minio-split/deployment-console.yaml
+  target:
+    group: apps
+    version: v1
+    kind: Deployment
+    name: console
+    
+- path: patch/delete-minio-split/service-console.yaml
+  target:
+    version: v1
+    kind: Service
+    name: console
+    
+- path: patch/delete-minio-split/configmap-console-env.yaml
+  target:
+    version: v1
+    kind: ConfigMap
+    name: console-env
+    
+- path: patch/delete-minio-split/clusterrolebinding-console-sa-binding.yaml
+  target:
+    group: rbac.authorization.k8s.io
+    version: v1
+    kind: ClusterRoleBinding
+    name: console-sa-binding
+    
+- path: patch/delete-minio-split/clusterrole-console-sa-role.yaml
+  target:
+    group: rbac.authorization.k8s.io
+    version: v1
+    kind: ClusterRole
+    name: console-sa-role
+    
+- path: patch/delete-minio-split/serviceaccount-console-sa.yaml
+  target:
+    version: v1
+    kind: ServiceAccount
+    name: console-sa
+    
+- path: patch/delete-duplicated-ns.yaml
+  target:
+    version: v1
+    kind: Namespace
+    name: minio-operator
+    
+- path: patch/pg-configmap.yaml
+  target:
+    version: v1
+    kind: ConfigMap
+    name: postgres-operator
