@@ -1,21 +1,3 @@
-# namePrefix: '{{ include "chart.fullname" . }}-'
-
-# namespace: '{{ .Release.Namespace | quote }}'
-
-# generatorOptions:
-#   disableNameSuffixHash: true
-
-
-# apiVersion: kustomize.config.k8s.io/v1beta1
-# kind: Kustomization
-# resources:
-# - ../../certmanager
-# patches:
-# - path: patch_certificate_dns.yaml
-# - path: patch_certificate_secret.yaml
-
-
-# Don't apply namePrefix to the Certificate resource
 namePrefix: '{{ include "chart.fullname" . }}-'
 
 namespace: '{{ .Release.Namespace | quote }}'
@@ -23,20 +5,9 @@ namespace: '{{ .Release.Namespace | quote }}'
 generatorOptions:
   disableNameSuffixHash: true
 
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources:
-- ../../certmanager
+patchesStrategicMerge:
+- patch_certificate_dns.yaml
+- patch_certificate_secret.yaml
 
-patches:
-- path: patch_certificate_dns.yaml
-- path: patch_certificate_secret.yaml
-# Add a new patch to ensure certificate has the exact name expected by webhooks
-- patch: |-
-    apiVersion: cert-manager.io/v1
-    kind: Certificate
-    metadata:
-      name: serving-cert
-  target:
-    kind: Certificate
-    name: serving-cert
+bases:
+- ../../certmanager
