@@ -120,6 +120,8 @@ jobs:
           kubectl get Certificate --all-namespaces
           kubectl get Issuer --all-namespaces
 
+          kubectl get secret --all-namespaces
+
       - name: install harbor
         run: |
           set -ex
