@@ -114,6 +114,9 @@ jobs:
           kubectl get crd | grep -i goharbor.io
           kubectl wait --for=condition=Established crd/harborclusters.goharbor.io --timeout=300s
 
+          kubectl get validatingwebhookconfiguration validating-webhook-configuration -o yaml
+          kubectl get mutatingwebhookconfiguration mutating-webhook-configuration -o yaml
+
       - name: install harbor
         run: |
           set -ex
