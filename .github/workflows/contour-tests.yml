@@ -117,6 +117,9 @@ jobs:
           kubectl get validatingwebhookconfiguration validating-webhook-configuration -o yaml
           kubectl get mutatingwebhookconfiguration mutating-webhook-configuration -o yaml
 
+          kubectl get Certificate --all-namespaces
+          kubectl get Issuer --all-namespaces
+
       - name: install harbor
         run: |
           set -ex
