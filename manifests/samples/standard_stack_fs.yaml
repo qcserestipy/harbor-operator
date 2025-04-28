@@ -141,6 +141,8 @@ spec:
   internalTLS:
     enabled: true
   portal: {}
+  jobservice:
+    replicas: 1
   registry:
     metrics:
       enabled: true
