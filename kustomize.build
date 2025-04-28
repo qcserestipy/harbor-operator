@@ -70323,7 +70323,7 @@ apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration
 metadata:
   annotations:
-    cert-manager.io/inject-ca-from: harbor-operator-ns/serving-cert
+    cert-manager.io/inject-ca-from: CERTIFICATE_NAMESPACE_PLACEHOLDER/CERTIFICATE_NAME_PLACEHOLDER
     goharbor.io/deploy-engine: Kustomization
     goharbor.io/deploy-mode: cluster
     goharbor.io/operator-version: v1.3.0
@@ -70332,7 +70332,6 @@ webhooks:
 - admissionReviewVersions:
   - v1beta1
   clientConfig:
-    caBundle: serving-cert
     service:
       name: webhook-service
       namespace: harbor-operator-ns
@@ -70360,7 +70359,6 @@ webhooks:
   - v1beta1
   - v1
   clientConfig:
-    caBundle: serving-cert
     service:
       name: webhook-service
       namespace: harbor-operator-ns
@@ -70383,7 +70381,7 @@ apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingWebhookConfiguration
 metadata:
   annotations:
-    cert-manager.io/inject-ca-from: harbor-operator-ns/serving-cert
+    cert-manager.io/inject-ca-from: CERTIFICATE_NAMESPACE_PLACEHOLDER/CERTIFICATE_NAME_PLACEHOLDER
     goharbor.io/deploy-engine: Kustomization
     goharbor.io/deploy-mode: cluster
     goharbor.io/operator-version: v1.3.0
@@ -70393,7 +70391,6 @@ webhooks:
   - v1beta1
   - v1
   clientConfig:
-    caBundle: serving-cert
     service:
       name: webhook-service
       namespace: harbor-operator-ns
@@ -70415,7 +70412,6 @@ webhooks:
   - v1beta1
   - v1
   clientConfig:
-    caBundle: serving-cert
     service:
       name: webhook-service
       namespace: harbor-operator-ns
@@ -70437,7 +70433,6 @@ webhooks:
   - v1beta1
   - v1
   clientConfig:
-    caBundle: serving-cert
     service:
       name: webhook-service
       namespace: harbor-operator-ns
@@ -70459,7 +70454,6 @@ webhooks:
   - v1beta1
   - v1
   clientConfig:
-    caBundle: serving-cert
     service:
       name: webhook-service
       namespace: harbor-operator-ns
@@ -70481,7 +70475,6 @@ webhooks:
   - v1beta1
   - v1
   clientConfig:
-    caBundle: serving-cert
     service:
       name: webhook-service
       namespace: harbor-operator-ns
@@ -70502,7 +70495,6 @@ webhooks:
 - admissionReviewVersions:
   - v1beta1
   clientConfig:
-    caBundle: serving-cert
     service:
       name: webhook-service
       namespace: harbor-operator-ns

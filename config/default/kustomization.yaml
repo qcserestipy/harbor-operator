@@ -1,122 +1,194 @@
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
+# apiVersion: kustomize.config.k8s.io/v1beta1
+# kind: Kustomization
+
+# namespace: harbor-operator-ns
+
+# resources:
+# - ../crd
+# - ../manager
+# - ../rbac
+# - ../webhook
+# - ../certmanager
+
+# patches:
+# - path: manager_prometheus_metrics_patch.yaml
+# - path: manager_webhook_patch.yaml
+# - path: webhookcainjection_patch.yaml
+# - path: webhook_namespaceselector_patch.yaml
+
+# # Modern replacements instead of deprecated vars
+# replacements:
+#   # CERTIFICATE_NAMESPACE replacement
+#   - source:
+#       kind: Certificate
+#       group: cert-manager.io
+#       version: v1
+#       name: serving-cert
+#       fieldPath: metadata.namespace
+#     targets:
+#       - select:
+#           kind: ValidatingWebhookConfiguration
+#         fieldPaths:
+#           - "webhooks.*.clientConfig.service.namespace"
+#       - select:
+#           kind: MutatingWebhookConfiguration 
+#         fieldPaths:
+#           - "webhooks.*.clientConfig.service.namespace"
+#       # Add this to replace CERTIFICATE_NAMESPACE_PLACEHOLDER in annotation
+#       - select:
+#           kind: ValidatingWebhookConfiguration
+#           name: validating-webhook-configuration
+#         fieldPaths:
+#           - "metadata.annotations.cert-manager\\.io/inject-ca-from"
+#         options:
+#           delimiter: "/"
+#           index: 0
+#       - select:
+#           kind: MutatingWebhookConfiguration
+#           name: mutating-webhook-configuration
+#         fieldPaths:
+#           - "metadata.annotations.cert-manager\\.io/inject-ca-from"
+#         options:
+#           delimiter: "/"
+#           index: 0
+
+#   # CERTIFICATE_NAME replacement
+#   - source:
+#       kind: Certificate
+#       group: cert-manager.io
+#       version: v1
+#       name: serving-cert
+#       fieldPath: metadata.name
+#     targets:
+#       - select:
+#           kind: ValidatingWebhookConfiguration
+#         fieldPaths:
+#           - "webhooks.*.clientConfig.caBundle"
+#         options:
+#           create: true
+#       - select:
+#           kind: MutatingWebhookConfiguration
+#         fieldPaths:
+#           - "webhooks.*.clientConfig.caBundle"
+#         options:
+#           create: true
+#       # Add this to replace CERTIFICATE_NAME_PLACEHOLDER in annotation
+#       - select:
+#           kind: ValidatingWebhookConfiguration
+#           name: validating-webhook-configuration
+#         fieldPaths:
+#           - "metadata.annotations.cert-manager\\.io/inject-ca-from"
+#         options:
+#           delimiter: "/"
+#           index: 1
+#       - select:
+#           kind: MutatingWebhookConfiguration
+#           name: mutating-webhook-configuration
+#         fieldPaths:
+#           - "metadata.annotations.cert-manager\\.io/inject-ca-from"
+#         options:
+#           delimiter: "/"
+#           index: 1
+
+#   # SERVICE_NAMESPACE replacement
+#   - source:
+#       kind: Service
+#       version: v1
+#       name: webhook-service  
+#       fieldPath: metadata.namespace
+#     targets:
+#       - select:
+#           kind: ValidatingWebhookConfiguration
+#         fieldPaths:
+#           - "webhooks.*.clientConfig.service.namespace"
+#       - select:
+#           kind: MutatingWebhookConfiguration
+#         fieldPaths:
+#           - "webhooks.*.clientConfig.service.namespace"
+
+#   # SERVICE_NAME replacement
+#   - source:
+#       kind: Service
+#       version: v1
+#       name: webhook-service
+#     targets:
+#       - select:
+#           kind: ValidatingWebhookConfiguration
+#         fieldPaths:
+#           - "webhooks.*.clientConfig.service.name"
+#       - select:
+#           kind: MutatingWebhookConfiguration
+#         fieldPaths:
+#           - "webhooks.*.clientConfig.service.name"
+
+
+# Labels to add to all resources and selectors.
+#commonLabels:
+#  someName: someValue
 
 namespace: harbor-operator-ns
 
-resources:
+bases:
 - ../crd
 - ../manager
 - ../rbac
+# [WEBHOOK] To enable webhook, uncomment all the sections with [WEBHOOK] prefix including the one in crd/kustomization.yaml
 - ../webhook
+# [CERTMANAGER] To enable cert-manager, uncomment all sections with 'CERTMANAGER'. 'WEBHOOK' components are required.
 - ../certmanager
 
-patches:
-- path: manager_prometheus_metrics_patch.yaml
-- path: manager_webhook_patch.yaml
-- path: webhookcainjection_patch.yaml
-- path: webhook_namespaceselector_patch.yaml
+patchesStrategicMerge:
+  # Protect the /metrics endpoint by putting it behind auth.
+  # Only one of manager_auth_proxy_patch.yaml and
+  # manager_prometheus_metrics_patch.yaml should be enabled.
+#- manager_auth_proxy_patch.yaml
+  # If you want your controller-manager to expose the /metrics
+  # endpoint w/o any authn/z, uncomment the following line and
+  # comment manager_auth_proxy_patch.yaml.
+  # Only one of manager_auth_proxy_patch.yaml and
+  # manager_prometheus_metrics_patch.yaml should be enabled.
+- manager_prometheus_metrics_patch.yaml
 
-# Modern replacements instead of deprecated vars
-replacements:
-  # CERTIFICATE_NAMESPACE replacement
-  - source:
-      kind: Certificate
-      group: cert-manager.io
-      version: v1
-      name: serving-cert
-      fieldPath: metadata.namespace
-    targets:
-      - select:
-          kind: ValidatingWebhookConfiguration
-        fieldPaths:
-          - "webhooks.*.clientConfig.service.namespace"
-      - select:
-          kind: MutatingWebhookConfiguration 
-        fieldPaths:
-          - "webhooks.*.clientConfig.service.namespace"
-      # Add this to replace CERTIFICATE_NAMESPACE_PLACEHOLDER in annotation
-      - select:
-          kind: ValidatingWebhookConfiguration
-          name: validating-webhook-configuration
-        fieldPaths:
-          - "metadata.annotations.cert-manager\\.io/inject-ca-from"
-        options:
-          delimiter: "/"
-          index: 0
-      - select:
-          kind: MutatingWebhookConfiguration
-          name: mutating-webhook-configuration
-        fieldPaths:
-          - "metadata.annotations.cert-manager\\.io/inject-ca-from"
-        options:
-          delimiter: "/"
-          index: 0
+# [WEBHOOK] To enable webhook, uncomment all the sections with [WEBHOOK] prefix including the one in crd/kustomization.yaml
+- manager_webhook_patch.yaml
 
-  # CERTIFICATE_NAME replacement
-  - source:
-      kind: Certificate
-      group: cert-manager.io
-      version: v1
-      name: serving-cert
-      fieldPath: metadata.name
-    targets:
-      - select:
-          kind: ValidatingWebhookConfiguration
-        fieldPaths:
-          - "webhooks.*.clientConfig.caBundle"
-        options:
-          create: true
-      - select:
-          kind: MutatingWebhookConfiguration
-        fieldPaths:
-          - "webhooks.*.clientConfig.caBundle"
-        options:
-          create: true
-      # Add this to replace CERTIFICATE_NAME_PLACEHOLDER in annotation
-      - select:
-          kind: ValidatingWebhookConfiguration
-          name: validating-webhook-configuration
-        fieldPaths:
-          - "metadata.annotations.cert-manager\\.io/inject-ca-from"
-        options:
-          delimiter: "/"
-          index: 1
-      - select:
-          kind: MutatingWebhookConfiguration
-          name: mutating-webhook-configuration
-        fieldPaths:
-          - "metadata.annotations.cert-manager\\.io/inject-ca-from"
-        options:
-          delimiter: "/"
-          index: 1
+# [CERTMANAGER] To enable cert-manager, uncomment all sections with 'CERTMANAGER'.
+# Uncomment 'CERTMANAGER' sections in crd/kustomization.yaml to enable the CA injection in the admission webhooks.
+# 'CERTMANAGER' needs to be enabled to use ca injection
+- webhookcainjection_patch.yaml
 
-  # SERVICE_NAMESPACE replacement
-  - source:
-      kind: Service
-      version: v1
-      name: webhook-service  
-      fieldPath: metadata.namespace
-    targets:
-      - select:
-          kind: ValidatingWebhookConfiguration
-        fieldPaths:
-          - "webhooks.*.clientConfig.service.namespace"
-      - select:
-          kind: MutatingWebhookConfiguration
-        fieldPaths:
-          - "webhooks.*.clientConfig.service.namespace"
+# [WEBHOOK] To add namespaceselector to weebhook.
+# so that webhook won't check namespaces with specific labels
+# avoid blocking controller coming up
+- webhook_namespaceselector_patch.yaml
 
-  # SERVICE_NAME replacement
-  - source:
-      kind: Service
-      version: v1
-      name: webhook-service
-    targets:
-      - select:
-          kind: ValidatingWebhookConfiguration
-        fieldPaths:
-          - "webhooks.*.clientConfig.service.name"
-      - select:
-          kind: MutatingWebhookConfiguration
-        fieldPaths:
-          - "webhooks.*.clientConfig.service.name"
+
+# the following config is for teaching kustomize how to do var substitution
+vars:
+# [CERTMANAGER] To enable cert-manager, uncomment all sections with 'CERTMANAGER' prefix.
+- name: CERTIFICATE_NAMESPACE # namespace of the certificate CR
+  objref:
+    kind: Certificate
+    group: cert-manager.io
+    version: v1
+    name: serving-cert # this name should match the one in certificate.yaml
+  fieldref:
+    fieldpath: metadata.namespace
+- name: CERTIFICATE_NAME
+  objref:
+    kind: Certificate
+    group: cert-manager.io
+    version: v1
+    name: serving-cert # this name should match the one in certificate.yaml
+- name: SERVICE_NAMESPACE # namespace of the service
+  objref:
+    kind: Service
+    version: v1
+    name: webhook-service
+  fieldref:
+    fieldpath: metadata.namespace
+- name: SERVICE_NAME
+  objref:
+    kind: Service
+    version: v1
+    name: webhook-service
