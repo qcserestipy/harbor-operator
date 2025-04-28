@@ -112,6 +112,7 @@ jobs:
           fi
 
           kubectl get crd | grep -i goharbor.io
+          kubectl wait --for=condition=Established crd/harborclusters.goharbor.io --timeout=300s
 
       - name: install harbor
         run: |
