@@ -66405,7 +66405,15 @@ data:
     - key: requeue-after-minutes
       priority: 200
       value: "5"
+  harborserverconfiguration-ctrl.yaml: |
+    - key: max-reconcile
+      priority: 200
+      value: "1"
   jobservice-ctrl.yaml: |
+    - key: max-reconcile
+      priority: 200
+      value: "1"
+  namespace-ctrl.yaml: |
     - key: max-reconcile
       priority: 200
       value: "1"
@@ -66418,6 +66426,10 @@ data:
       priority: 200
       value: "1"
   portal-ctrl.yaml: |
+    - key: max-reconcile
+      priority: 200
+      value: "1"
+  pullsecretbinding-ctrl.yaml: |
     - key: max-reconcile
       priority: 200
       value: "1"
@@ -66976,7 +66988,7 @@ data:
   enable_team_member_deprecation: "false"
   enable_teams_api: "false"
   external_traffic_policy: Cluster
-  logical_backup_docker_image: registry.opensource.zalan.do/acid/logical-backup:v1.7.0
+  logical_backup_docker_image: registry.opensource.zalan.do/acid/logical-backup:v1.8.0
   logical_backup_job_prefix: logical-backup-
   logical_backup_provider: s3
   logical_backup_s3_bucket: my-bucket-url
