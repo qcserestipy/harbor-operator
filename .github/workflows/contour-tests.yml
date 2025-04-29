@@ -135,6 +135,8 @@ jobs:
             echo $i
             kubectl -n cluster-sample-ns get all
 
+            kubectl get pvc -n cluster-sample-ns -owide
+
           done
 
           function wait-for-condition () {
@@ -146,6 +148,8 @@ jobs:
             kubectl describe harborcluster -n cluster-sample-ns
             kubectl describe harbor -n cluster-sample-ns
             kubectl get all -n cluster-sample-ns
+            
+            kubectl get pvc -n cluster-sample-ns -owide
 
             for n in $(kubectl -n cluster-sample-ns get po |grep -v Running|grep -v NAME|awk '{print $1}');do
               echo describe $n
