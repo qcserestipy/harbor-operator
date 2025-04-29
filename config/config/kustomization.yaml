@@ -33,5 +33,11 @@ configMapGenerator:
   - controllers/registry-ctrl.yaml
   - controllers/registryctl-ctrl.yaml
   - controllers/trivy-ctrl.yaml
+
+  - controllers/namespace-ctrl.yaml
+  - controllers/harborconfigurationcm-ctrl.yaml
+  - controllers/pullsecretbinding-ctrl.yaml
+  - controllers/harborserverconfiguration-ctrl.yaml
+
   - config.yaml
   name: config
