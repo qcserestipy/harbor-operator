@@ -615,7 +615,7 @@ $(KUBEBUILDER):
 
 # find or download kustomize
 # download kustomize if necessary
-KUSTOMIZE_VERSION := 5.3.0
+KUSTOMIZE_VERSION := 5.7.0
 KUSTOMIZE := $(BIN)/kustomize
 
 .PHONY: kustomize
@@ -628,7 +628,7 @@ kustomize:
 $(KUSTOMIZE):
 	$(MAKE) $(BIN)
 	# https://kubectl.docs.kubernetes.io/installation/kustomize/binaries/
-	curl -sSL "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v$(KUSTOMIZE_VERSION)/kustomize_v$(KUSTOMIZE_VERSION)_$$(go env GOOS)_$$(go env GOARCH).tar.gz" \
+	curl -L "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v$(KUSTOMIZE_VERSION)/kustomize_v$(KUSTOMIZE_VERSION)_$$(go env GOOS)_$$(go env GOARCH).tar.gz" \
 		| tar -xzC '$(BIN)' kustomize
 
 # find helm or raise an error
