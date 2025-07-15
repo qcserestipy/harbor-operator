@@ -555,15 +555,26 @@ $(CONTROLLER_GEN):
 
 # find or download markdownlint
 # download markdownlint if necessary
+# MARKDOWNLINT_VERSION := 0.33.0
+# MARKDOWNLINT := npx markdownlint
+
+# .PHONY: markdownlint
+# markdownlint:
+# 	@$(MARKDOWNLINT) version 2>&1 \
+# 		| grep '$(MARKDOWNLINT_VERSION)' > /dev/null \
+# 	|| rm -f $(MARKDOWNLINT)
+# 	@$(MAKE) $(MARKDOWNLINT)
 MARKDOWNLINT_VERSION := 0.33.0
 MARKDOWNLINT := npx markdownlint
 
 .PHONY: markdownlint
 markdownlint:
-	@$(MARKDOWNLINT) version 2>&1 \
-		| grep '$(MARKDOWNLINT_VERSION)' > /dev/null \
-	|| rm -f $(MARKDOWNLINT)
-	@$(MAKE) $(MARKDOWNLINT)
+	@if npx --no-install markdownlint --version 2>&1 | grep '$(MARKDOWNLINT_VERSION)' > /dev/null; then \
+		echo "markdownlint already installed"; \
+	else \
+		echo "Installing markdownlint"; \
+		npm install markdownlint-cli@$(MARKDOWNLINT_VERSION) --no-save; \
+	fi
 
 # find or download golangci-lint
 # download golangci-lint if necessary

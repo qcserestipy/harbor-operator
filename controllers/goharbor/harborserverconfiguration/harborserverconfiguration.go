@@ -134,5 +134,5 @@ func (r *Reconciler) checkServerHealth() error {
 		return nil
 	}
 
-	return errors.Errorf(errStr)
+	return errors.Errorf("Error: %s", errStr)
 }

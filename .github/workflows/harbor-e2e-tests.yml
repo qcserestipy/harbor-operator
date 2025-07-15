@@ -35,8 +35,8 @@ jobs:
         # - "1.26.15"
         # - "1.27.16"
         # - "1.28.15"   
-        # - "1.29.14"   
-        - "1.30.10"
+        - "1.29.14"   
+        # - "1.30.10"
 
         # https://github.com/kubernetes/ingress-nginx/tags
         ingress:
