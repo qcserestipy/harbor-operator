@@ -565,11 +565,6 @@ markdownlint:
 	|| rm -f $(MARKDOWNLINT)
 	@$(MAKE) $(MARKDOWNLINT)
 
-$(MARKDOWNLINT):
-	$(MAKE) $(BIN)
-	# https://github.com/igorshubovych/markdownlint-cli#installation
-	npm install markdownlint-cli@$(MARKDOWNLINT_VERSION) --no-save
-
 # find or download golangci-lint
 # download golangci-lint if necessary
 GOLANGCI_LINT := $(BIN)/golangci-lint
@@ -664,13 +659,21 @@ $(GORELEASER):
 STRINGER_VERSION := v0.32.0
 STRINGER := $(BIN)/stringer
 
+# .PHONY: stringer
+# stringer:
+# 	$(warning stringer command has no `version` command)
+# 	#@$(STRINGER) version 2>&1 \
+# 	#	| grep '$(STRINGER_VERSION)' > /dev/null \
+# 	#|| rm -f $(STRINGER)
+# 	@$(MAKE) $(STRINGER)
 .PHONY: stringer
 stringer:
-	$(warning stringer command has no `version` command)
-	#@$(STRINGER) version 2>&1 \
-	#	| grep '$(STRINGER_VERSION)' > /dev/null \
-	#|| rm -f $(STRINGER)
-	@$(MAKE) $(STRINGER)
+	@if [ -f $(STRINGER) ]; then \
+		echo "Stringer already installed"; \
+	else \
+		echo "Installing stringer"; \
+		$(MAKE) $(STRINGER); \
+	fi
 
 $(STRINGER):
 	$(MAKE) $(BIN)
